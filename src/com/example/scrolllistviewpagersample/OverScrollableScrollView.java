@@ -1,16 +1,18 @@
 package com.example.scrolllistviewpagersample;
 
-import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ScrollView;
 
 public class OverScrollableScrollView extends ScrollView {
 
     public static final String TAG = "OverScrollableScrollView";
     private float xDistance, yDistance, xLast, yLast;
+    private boolean mIsTop = true, mIsBottom = false;
+    
     public OverScrollableScrollView(Context context) {
         this(context, null, 0);
     }
@@ -44,20 +46,53 @@ public class OverScrollableScrollView extends ScrollView {
             
             int scrollY = getScrollY();
             int height = getHeight();
-            int scrollViewMeasuredHeight = getMeasuredHeight();
+            View contentView = getChildAt(0);
+            int measuredHeight = contentView.getMeasuredHeight();
             Log.d(TAG, "scrollY=" + scrollY + ", height=" + height
-                    + ", scrollViewMeasuredHeight=" + scrollViewMeasuredHeight);
+                    + ", measuredHeight=" + measuredHeight);
             if (scrollY == 0) {
                 Log.d(TAG, "滑动到了顶端 view.getScrollY()=" + scrollY);
             }
-            if ((scrollY + height) == scrollViewMeasuredHeight) {
+            if ((scrollY + height) == measuredHeight) {
                 Log.d(TAG, "滑动到了底部 scrollY=" + scrollY);
                 Log.d(TAG, "滑动到了底部 height=" + height);
-                Log.d(TAG, "滑动到了底部 scrollViewMeasuredHeight="
-                        + scrollViewMeasuredHeight);
+                Log.d(TAG, "滑动到了底部 measuredHeight=" + measuredHeight);
             }
+            
+            if (mIsBottom) {
+                return false;
+            }
+            
             break;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+    
+    @Override
+    protected void onScrollChanged(int x, int y, int oldx, int oldy) {
+        Log.d(TAG, "onScrollChanged x=" + x + ", y=" + y + ", oldx=" + oldx + ", oldy=" + oldy);
+        super.onScrollChanged(x, y, oldx, oldy);
+        doOnBorderListener();
+    }
+    
+    private void doOnBorderListener() {
+        View contentView = getChildAt(0);
+        if (contentView != null && contentView.getMeasuredHeight() == getScrollY() + getHeight()) {
+            mIsBottom = true;
+            OnBottom();
+        } else if (getScrollY() == 0) {
+            mIsTop = true;
+            OnTop();
+        } else {
+            mIsTop = mIsBottom = false;
+        }
+    }
+    
+    private void OnTop() {
+        Log.d(TAG, "OnTop");
+    }
+    
+    private void OnBottom() {
+        Log.d(TAG, "OnBottom");
     }
 }
