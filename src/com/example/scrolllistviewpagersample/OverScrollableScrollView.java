@@ -12,6 +12,12 @@ public class OverScrollableScrollView extends ScrollView {
     public static final String TAG = "OverScrollableScrollView";
     private float xDistance, yDistance, xLast, yLast;
     private boolean mIsTop = true, mIsBottom = false;
+    private boolean mIsScrollingUp = false;
+    private OverScrollController mController;
+    
+    public interface OverScrollController {
+        public boolean canScrollUp();
+    }
     
     public OverScrollableScrollView(Context context) {
         this(context, null, 0);
@@ -24,43 +30,62 @@ public class OverScrollableScrollView extends ScrollView {
     public OverScrollableScrollView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
+    
+    public void setController(OverScrollController controller) {
+        mController = controller;
+    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
         case MotionEvent.ACTION_DOWN:
-            xDistance = yDistance = 0f;
+//            xDistance = yDistance = 0f;
             xLast = ev.getX();
             yLast = ev.getY();
             break;
         case MotionEvent.ACTION_MOVE:
-//            final float curX = ev.getX();
-//            final float curY = ev.getY();
+            final float curX = ev.getX();
+            final float curY = ev.getY();
 //            xDistance += Math.abs(curX - xLast);
 //            yDistance += Math.abs(curY - yLast);
-//            xLast = curX;
-//            yLast = curY;
+            if (curY > yLast) {
+                mIsScrollingUp = true;
+            } else {
+                mIsScrollingUp = false;
+            }
+            xLast = curX;
+            yLast = curY;
 //            if (xDistance > yDistance) {
 //                return false;
 //            }
             
-            int scrollY = getScrollY();
-            int height = getHeight();
-            View contentView = getChildAt(0);
-            int measuredHeight = contentView.getMeasuredHeight();
-            Log.d(TAG, "scrollY=" + scrollY + ", height=" + height
-                    + ", measuredHeight=" + measuredHeight);
-            if (scrollY == 0) {
-                Log.d(TAG, "滑动到了顶端 view.getScrollY()=" + scrollY);
-            }
-            if ((scrollY + height) == measuredHeight) {
-                Log.d(TAG, "滑动到了底部 scrollY=" + scrollY);
-                Log.d(TAG, "滑动到了底部 height=" + height);
-                Log.d(TAG, "滑动到了底部 measuredHeight=" + measuredHeight);
-            }
+//            int scrollY = getScrollY();
+//            int height = getHeight();
+//            View contentView = getChildAt(0);
+//            int measuredHeight = contentView.getMeasuredHeight();
+//            Log.d(TAG, "scrollY=" + scrollY + ", height=" + height
+//                    + ", measuredHeight=" + measuredHeight);
+//            if (scrollY == 0) {
+//                Log.d(TAG, "滑动到了顶端 view.getScrollY()=" + scrollY);
+//            }
+//            if ((scrollY + height) == measuredHeight) {
+//                Log.d(TAG, "滑动到了底部 scrollY=" + scrollY);
+//                Log.d(TAG, "滑动到了底部 height=" + height);
+//                Log.d(TAG, "滑动到了底部 measuredHeight=" + measuredHeight);
+//            }
             
-            if (mIsBottom) {
-                return false;
+            int childTop = 0;
+            if (getChildCount() > 0) {
+                childTop = getChildAt(getChildCount() - 1).getTop();
+            }
+            Log.d(TAG, "onInterceptTouchEvent childCount=" + getChildCount() + ", childTop=" + childTop);
+            
+            if (mController != null && mIsBottom) {
+                if (mIsScrollingUp && mController.canScrollUp()) {
+                    break;
+                } else {
+                    return false;
+                }
             }
             
             break;

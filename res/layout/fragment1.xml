@@ -3,9 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <ListView 
+    <TextView 
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:text="Sub header" />
+    
+    <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header"
+        android:layout_marginTop="10dp" />
     
 </RelativeLayout>

@@ -8,9 +8,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class MyPagerAdapter extends FragmentPagerAdapter {
 
-	private static final int TAB_PARAMS_INDEX = 0;
-	private static final int TAB_DETAILS_INDEX = 1;
-	private static final int TAB_REVIEWS_INDEX = 2;
+	public static final int TAB_PARAMS_INDEX = 0;
+	public static final int TAB_DETAILS_INDEX = 1;
+	public static final int TAB_REVIEWS_INDEX = 2;
 	private ArrayList<Fragment> mFragmentList = new ArrayList<Fragment>();
 	
 	public MyPagerAdapter(FragmentManager fm) {
