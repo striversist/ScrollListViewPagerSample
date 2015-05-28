@@ -51,12 +51,16 @@ public class MainActivity extends FragmentActivity {
         
         mAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mAdapter);
+        Fragment1 fragment = (Fragment1) mAdapter.getItem(MyPagerAdapter.TAB_PARAMS_INDEX);
+        mScrollView.setController(fragment);
         mPager.setOnPageChangeListener(new OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 if (position == MyPagerAdapter.TAB_PARAMS_INDEX) {
                     Fragment1 fragment = (Fragment1) mAdapter.getItem(position);
                     mScrollView.setController(fragment);
+                } else {
+                	mScrollView.setController(null);
                 }
             }
             
